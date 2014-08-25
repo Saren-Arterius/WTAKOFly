@@ -1,4 +1,4 @@
-package me.desht.dhutils;
+package net.wtako.WTAKOFly.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;

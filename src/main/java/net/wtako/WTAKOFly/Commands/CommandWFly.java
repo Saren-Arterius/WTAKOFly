@@ -1,8 +1,9 @@
 package net.wtako.WTAKOFly.Commands;
 
-import net.wtako.WTAKOFly.Commands.WFly.ArgHelp;
-import net.wtako.WTAKOFly.Commands.WFly.ArgReload;
-import net.wtako.WTAKOFly.Commands.WFly.ArgWFly;
+import java.lang.reflect.InvocationTargetException;
+
+import net.wtako.WTAKOFly.Utils.CommandsWFly;
+import net.wtako.WTAKOFly.Utils.Lang;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,17 +14,27 @@ public class CommandWFly implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length >= 1) {
-            if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")) {
-                new ArgHelp(sender);
-                return true;
-            } else if (args[0].equalsIgnoreCase("reload")) {
-                new ArgReload(sender);
+            return callCommand(sender, args, args[0]);
+        }
+        return callCommand(sender, args, "MAIN_COMMAND");
+    }
+
+    public boolean callCommand(CommandSender sender, String[] args, String targetCommandName) {
+        try {
+            final CommandsWFly targetCommand = CommandsWFly.valueOf(targetCommandName.toUpperCase().replace("-", "_"));
+            if (!sender.hasPermission(targetCommand.getRequiredPermission())) {
+                sender.sendMessage(Lang.NO_PERMISSION_COMMAND.toString());
                 return true;
             }
-        } else {
-            new ArgWFly(sender);
+            targetCommand.getTargetClass().getDeclaredConstructor(CommandSender.class, String[].class)
+            .newInstance(sender, args);
             return true;
+        } catch (final IllegalArgumentException e) {
+            return false;
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                | InvocationTargetException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 }

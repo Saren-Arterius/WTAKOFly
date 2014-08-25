@@ -5,9 +5,9 @@ import net.wtako.WTAKOFly.Methods.FlyManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ArgWFly {
+public class WFly {
 
-    public ArgWFly(CommandSender sender) {
+    public WFly(CommandSender sender, String[] args) {
         FlyManager.toggleFly((Player) sender);
     }
 

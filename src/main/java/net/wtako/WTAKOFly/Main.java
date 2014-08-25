@@ -3,19 +3,26 @@ package net.wtako.WTAKOFly;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.wtako.WTAKOFly.Commands.CommandWFly;
+import net.wtako.WTAKOFly.EventHandlers.FactionListener;
+import net.wtako.WTAKOFly.EventHandlers.PlayerProtectListener;
+import net.wtako.WTAKOFly.Methods.FlyManager;
 import net.wtako.WTAKOFly.Schedulers.ExpReducingTask;
+import net.wtako.WTAKOFly.Utils.Config;
 import net.wtako.WTAKOFly.Utils.Lang;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
 
     private static Main             instance;
+    public static String            artifactId;
     public static YamlConfiguration LANG;
     public static File              LANG_FILE;
     public static Logger            log = Logger.getLogger("WTAKOFly");
@@ -23,12 +30,21 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         Main.instance = this;
-        saveDefaultConfig();
-        getConfig().options().copyDefaults(true);
+        Main.artifactId = getProperty("artifactId");
         getCommand(getProperty("mainCommand")).setExecutor(new CommandWFly());
+        Config.saveAll();
         loadLang();
         if (ExpReducingTask.getInstance() == null) {
             new ExpReducingTask();
+        }
+        getServer().getPluginManager().registerEvents(new FactionListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerProtectListener(), this);
+    }
+
+    @Override
+    public void onDisable() {
+        for (final Player flyingPlayer: new ArrayList<Player>(FlyManager.getAllFlyingPlayers())) {
+            FlyManager.setNotFly(flyingPlayer);
         }
     }
 
@@ -50,7 +66,7 @@ public final class Main extends JavaPlugin {
                 Main.log.severe("[" + Main.getInstance().getName() + "] Couldn't create language file.");
                 Main.log.severe("[" + Main.getInstance().getName() + "] This is a fatal error. Now disabling");
                 setEnabled(false); // Without it loaded, we can't send them
-                                   // messages
+                // messages
             }
         }
         final YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);

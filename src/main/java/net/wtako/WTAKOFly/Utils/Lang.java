@@ -12,14 +12,21 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public enum Lang {
 
-    TITLE("title", "[" + Main.getInstance().getName() + "]"),
-    HELP_RELOAD("help-reload", "Type &a/" + Main.getInstance().getProperty("mainCommand")
-            + " reload&f to reload the plugin. &c(OP only)"),
-    FLY_ON("fly-on", "&aFlying enabled."),
-    FLY_OFF("fly-off", "&eFlying disabled."),
-    NOT_ENOUGH_EXP("not-enough-exp", "&eYou do not have enough exp to start flying."),
-    PLUGIN_RELOADED("plugin-reloaded", "&aPlugin reloaded."),
-    NO_PERMISSION_COMMAND("no-permission-command", "&cYou are not allowed to use this command.");
+    TITLE("[" + Main.getInstance().getName() + "]"),
+    CANNOT_START_FLYING("&cCannot start flying. Event is cancelled by other plugins."),
+    CANNOT_FLY_IN_THIS_WORLD("&cYou cannot fly in this world."),
+    FLY_ON("&aFlying enabled."),
+    FLY_OFF("&eFlying disabled."),
+    NOT_ENOUGH_EXP("&eYou do not have enough exp ({0}) to start flying."),
+    COMMAND_HELP_SEPERATOR("&6 | &a"),
+    COMMAND_ARG_IN_USE("&e{0}&a"),
+    SUB_COMMAND("Sub-command: &e{0}"),
+    HELP_HELP("Type &b/" + Main.getInstance().getProperty("mainCommand") + " &a{0}&f to show help (this message)."),
+    HELP_RELOAD("Type &b/" + Main.getInstance().getProperty("mainCommand") + " &a{0}&f to reload the plugin."),
+    HELP_WFLY("Type &b/" + Main.getInstance().getProperty("mainCommand") + "&f to use experience to fly."),
+    NO_PERMISSION_HELP(" (&cno permission&f)"),
+    PLUGIN_RELOADED("&aPlugin reloaded."),
+    NO_PERMISSION_COMMAND("&cYou are not allowed to use this command.");
 
     private String                   path;
     private String                   def;
@@ -33,8 +40,8 @@ public enum Lang {
      * @param start
      *            The default string.
      */
-    Lang(String path, String start) {
-        this.path = path;
+    Lang(String start) {
+        path = name().toLowerCase().replace("_", "-");
         def = start;
     }
 
