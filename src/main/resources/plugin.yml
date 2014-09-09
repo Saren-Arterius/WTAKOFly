@@ -7,7 +7,7 @@ website: ${url}
  
 main: ${groupId}.${artifactId}.${mainClass}
 mainCommand: ${mainCommand}
-depend: [mcore, Factions]
+depend: [MassiveCore, Factions]
 
 commands:
     ${mainCommand}:
